@@ -7,6 +7,7 @@ NOTE: This class is the metaphorical "main method" of your program,
 Original code by Dan Leyzberg and Art Simon
  */
 import java.awt.*;
+import javax.swing.SwingUtilities;
 
 public class Asteroids extends Game {
 	public static final int SCREEN_WIDTH = 800;
@@ -16,8 +17,8 @@ public class Asteroids extends Game {
 
 	public Asteroids() {
 		super("Asteroids!", SCREEN_WIDTH, SCREEN_HEIGHT);
-		this.setFocusable(true);
-		this.requestFocus();
+		setFocusable(true);
+		requestFocusInWindow();
 	}
 
 	public void paint(Graphics brush) {
@@ -33,7 +34,6 @@ public class Asteroids extends Game {
 	}
 
 	public static void main (String[] args) {
-		Asteroids a = new Asteroids();
-		a.repaint();
+		SwingUtilities.invokeLater(Asteroids::new);
 	}
 }

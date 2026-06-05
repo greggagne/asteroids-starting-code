@@ -7,44 +7,45 @@ NOTE: You don't need to understand the details here, no fiddling neccessary.
 Original code by Dan Leyzberg and Art Simon
  */
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
 
-public abstract class Game extends Canvas {
+public abstract class Game extends JPanel {
 	protected boolean on = true;
 	protected int width, height;
-	protected Image buffer;
+	protected BufferedImage buffer;
 
 	public Game(String name, int width, int height) {
 		this.width = width;
 		this.height = height;
+		setPreferredSize(new Dimension(width, height));
 
-		// Frame can be read as 'window' here.
-		Frame frame = new Frame(name);
+		JFrame frame = new JFrame(name);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(this);
-		frame.setSize(width, height);
-		frame.setVisible(true);
+		frame.pack();
 		frame.setResizable(false);
-		frame.addWindowListener(new WindowAdapter() { 
-			public void windowClosing(WindowEvent e) {System.exit(0);} 
-		});
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 
-		buffer = createImage(width, height);
+		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		new Timer(100, e -> {
+			if (on) repaint();
+		}).start();
 	}
 
 	// 'paint' will be called every tenth of a second that the game is on.
 	abstract public void paint(Graphics brush);
 
-	// 'update' paints to a buffer then to the screen, then waits a tenth of
-	// a second before repeating itself, assuming the game is on. This is done
-	// to avoid a choppy painting experience if repainted in pieces.
-	public void update(Graphics brush) {
-		paint(buffer.getGraphics());
-		brush.drawImage(buffer,0,0,this);
-		if (on) {sleep(10); repaint();}
-	}
-
-	// 'sleep' is a simple helper function used in 'update'.
-	private void sleep(int time) {
-		try {Thread.sleep(time);} catch(Exception exc){};
+	@Override
+	protected void paintComponent(Graphics g) {
+		Graphics bg = buffer.getGraphics();
+		try {
+			paint(bg);
+		} finally {
+			bg.dispose();
+		}
+		g.drawImage(buffer, 0, 0, this);
 	}
 }
