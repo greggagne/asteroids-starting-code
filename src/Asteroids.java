@@ -14,11 +14,19 @@ public class Asteroids extends Game {
 	public static final int SCREEN_HEIGHT = 600;
 
 	static int counter = 0;
+	private final Asteroid asteroid;
 
 	public Asteroids() {
 		super("Asteroids!", SCREEN_WIDTH, SCREEN_HEIGHT);
 		setFocusable(true);
 		requestFocusInWindow();
+
+		Point[] triangle = new Point[] {
+			new Point(0, 0),
+			new Point(60, 0),
+			new Point(30, 50)
+		};
+		asteroid = new Asteroid(triangle, new Point(200, 200));
 	}
 
 	public void paint(Graphics brush) {
@@ -31,6 +39,7 @@ public class Asteroids extends Game {
 		counter++;
 		brush.setColor(Color.white);
 		brush.drawString("Counter is " + counter,10,10);
+		asteroid.paint(brush, Color.lightGray);
 	}
 
 	public static void main (String[] args) {
